@@ -8,7 +8,10 @@ app = Flask(__name__)
 
 logging.basicConfig(level=logging.INFO)
 
-# все ID свои из ресурсов моей Алиса
+# создаем словарь, в котором ключ — название города,
+# а значение — массив, где перечислены id картинок,
+# которые мы записали в прошлом пункте.
+
 cities = {
     'москва': ['1030494/075bf25f053005371ae5',
                '1030494/82afca1c4a8eddae7cdb'],
@@ -86,9 +89,15 @@ def handle_dialog(res, req):
         if city in cities:
             res['response']['card'] = {}
             res['response']['card']['type'] = 'BigImage'
-            res['response']['card']['title'] = 'Этот город я знаю. Введи ещё один!'
+            res['response']['card']['title'] = 'Этот город я знаю!'
             res['response']['card']['image_id'] = random.choice(cities[city])
             res['response']['text'] = 'Я угадал!'
+            res['response']['buttons'] = [
+                {
+                    'title': city.title(),
+                    'hide': True
+                } for city in cities
+            ]
         # если не нашел, то отвечает пользователю
         # 'Первый раз слышу об этом городе.'
         else:
